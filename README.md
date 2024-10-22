@@ -15,3 +15,17 @@ React with GraphQL
 ## 관련 패키지 
 graphql-core
 strawberry-graphql
+
+# React
+npm i -s @apollo/client graphql
+npm i -s -D @graphql-codegen/cli @graphql-codegen/introspection @graphql-codegen/typescript-react-apollo
+
+## codegen
+* add codegen.yml
+* add ~~.graphql
+* scripts : "codegen": "graphql-codegen --config codegen.yml"
+* npm run codegen
+
+## in code
+* use ApolloClient
+* auto generated hook (ex: usePostListQuery)
