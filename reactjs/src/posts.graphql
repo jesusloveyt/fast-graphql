@@ -1,0 +1,46 @@
+query postList($limit: Int!, $cursor: String) {
+    posts(limit: $limit, cursor: $cursor) {
+        pageMeta {
+            nextCursor
+        }
+        posts {
+            author {
+                name
+                email
+            }
+            id
+            title
+            content
+        }
+    }
+}
+
+query postById($postId: String!) {
+    post(postId: $postId) {
+        author {
+            name
+            email
+        }
+        id
+        title
+        content
+    }
+}
+
+mutation insertPost($author: AuthorInput!, $title: String!, $content: String!) {
+    post(author: $author, title: $title, content: $content) {
+        id
+    }
+}
+
+mutation updatePost($postId: String!, $author: AuthorInput!, $title: String!, $content: String!) {
+    updatePost(postId: $postId, author: $author, title: $title, content: $content) {
+        id
+    }
+}
+
+mutation deletePost($postId: String!) {
+    deletePost(postId: $postId) {
+        message
+    }
+}
