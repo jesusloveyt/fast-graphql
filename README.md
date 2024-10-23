@@ -4,21 +4,33 @@
 * Django with GraphQL (VueJS, Angular)
 * React with GraphQL
 
-# GraphQL packages
+# FastAPI / Flask
+* 가상 환경 : virtualenv fastapi --python=python3.8 (python 3.13 이상에서 오류)
+
+## packages 설치
+* pip install graphql-core strawberry-graphql
+
+### 가능한 packages
 * graphql-core
 * Graphene
 * Ariadne
 
-# FastAPI / Flask
+## in code
+```
+schema = strawberry.Schema(query=Query, mutation=Mutation)
+~~~
+graphql_app = GraphQLRouter(schema)
+```
 
-* 가상 환경 : virtualenv fastapi --python=python3.8 (python 3.13 이상에서 오류)
-
-## 관련 패키지 
-* graphql-core
-* strawberry-graphql
+```
+@strawberry.type
+@strawberry.input
+@strawberry.field
+@strawberry.mutation
+```
 
 # React
-## library
+## packages 설치
 * npm i -s @apollo/client graphql (apollo-boost @apollo/react-hooks)
 * npm i -s -D @graphql-codegen/cli @graphql-codegen/introspection @graphql-codegen/typescript-react-apollo
 
