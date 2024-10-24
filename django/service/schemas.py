@@ -23,5 +23,10 @@ class Query(graphene.ObjectType):
 
     def resolve_posts(self, info):
         return Post.objects.all()
+    
+    post = graphene.Field(PostType, postId=graphene.String())
+
+    def resolve_post(self, info, postId):
+        return Post.objects.get(_id=postId)
 
 schema = graphene.Schema(query=Query, mutation=Mutations, types=[TodoType, TaskType, PostType])

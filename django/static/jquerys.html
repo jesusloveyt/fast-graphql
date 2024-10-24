@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <h1>GraphQL using jQuery</h1>
+    <div className="App">
+        <h1>Post List </h1>
+        <table style="border: solid; border-collapse: collapse; width: 100%;">
+          <thead>
+            <tr>
+              <th style="border: solid; padding: 8px; width: 20%;">Title</th>
+              <th style="border: solid; padding: 8px;">Content</th>
+            </tr>
+          </thead>
+          <tbody id="postList"></tbody>
+        </table>
+        
+        <div>
+          <button type="button" style="margin: 4px" onclick="postList()">List</button>
+          <button type="button" style="margin: 4px" onclick="clearForm()">New Form</button>
+          <button type="button" style="margin: 4px" onclick="savePost()">Save</button>
+        </div>
+
+        <h1>Post Form</h1>
+        <form>
+            <table style="border: solid; border-collapse: collapse; width: 100%;">
+            <tbody>
+              <tr>
+                <th style="border: solid; padding: 8px; width: 20%;">Title</th>
+                <td style="border: solid; padding: 8px;">
+                    <input type="hidden" id="postId" name="postId" />
+                    <input type="text" id="title" name="title" style="width: 96%;" />
+                </td>
+              </tr>
+              <tr>
+                <th style="border: solid; padding: 8px;">Content</th>
+                <td style="border: solid; padding: 8px;">
+                    <textarea id="content" name="content" style="width: 96%;"></textarea>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+    </div>
+
+    <script>
+async function callQuery(query, callback) {
+console.log(query);
+let myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+let data = await fetch(
+"/graphql/",
+{
+method: 'POST',
+headers: myHeaders,
+body: JSON.stringify({query})
+}
+)
+.then(res => {
+return res.json();
+})
+.then(json => {
+return json.data;
+})
+.then(callback);
+}
+
+    function makeList(data) {
+      if(!data || !data.posts) return;
+
+      console.log(data);
+      jQuery.each(data.posts, function(i, post) {
+        jQuery("#postList").append(
+          `<tr onclick="getPost('${post.Id}')">
+            <td style='border: solid; padding: 8px; width: 20%;'>${post.title}</td>
+            <td style='border: solid; padding: 8px;'>${post.content}</td>
+          </tr>`
+        );
+      });
+    }
+
+    function setForm(data) {
+      if(!data || !data.post) return;
+
+      console.log(data);
+      $("#postId").val(data.post.Id);
+      $("#title").val(data.post.title);
+      $("#content").val(data.post.content);
+    }
+
+    function clearForm() {
+      $("#postId").val("");
+      $("#title").val("");
+      $("#content").val("");
+    }
+
+    function postList() {
+      const query = `{
+  posts {
+    Id
+    title
+    content
+  }
+}`;
+      fetch(
+        '/graphql/',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        }
+      )
+        .then(response => response.json())
+        .then(json => makeList(json.data))
+    }
+
+    function getPost(postId) {
+      const query = `{
+  post(postId: "${postId}") {
+    Id
+    title
+    content
+  }
+}`;
+      fetch(
+        '/graphql/',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        }
+      )
+        .then(response => response.json())
+        .then(json => setForm(json.data))
+    }
+
+    function savePost() {
+      addPost($("#title").val(), $("#content").val());
+    }
+
+    function addPost(title, content) {
+      const query = `mutation {
+  createPost(
+    author: {
+      name: "hong"
+      email: "hong@mails.com"
+    }
+    title:"${title}"
+    content:"${content}"
+  )
+  {
+    post {
+      title
+    }
+  }
+}`;
+      fetch(
+        '/graphql/',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        }
+      )
+        .then(response => response.json())
+        .then(json => alert(json.data.createPost.post.title + " is saved!"))
+    }
+    </script>
+    
+</body>
+</html>
